@@ -17,7 +17,7 @@ void Time(const char *input_name)
     int energy;
     int dummy1, dummy2;
 
-    TH1F *hTime = new TH1F("hTime", ";t (clock counts); counts", 10001, -0.5, 10000.5);
+    TH1F *hTime = new TH1F("hTime", ";t (clock counts); counts", 10001, -5000.5, 5000.5);
 
     std::vector<std::pair<long, int>> channel0, channel1;
     while (input_file1 >> channel >> clock_counts >> energy >> dummy1 >> dummy1)
@@ -41,9 +41,9 @@ void Time(const char *input_name)
         long minimum = 999999999999;
         for (auto &&item1 : channel1)
         {
-            if (TMath::Abs(item.first - item1.first) < minimum)
+            if (TMath::Abs(item.first - item1.first) < TMath::Abs(minimum))
             {
-                minimum = TMath::Abs(item.first - item1.first);
+                minimum = item.first - item1.first;
                 continue;
             }
 
