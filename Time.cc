@@ -1,4 +1,5 @@
 #include <TH1F.h>
+#include <TF1.h>
 #include <TFile.h>
 #include <TCanvas.h>
 #include <TMath.h>
@@ -17,9 +18,10 @@ void Time(const char *input_name)
     int energy;
     int dummy1, dummy2;
 
-    TH1F *hTime = new TH1F("hTime", ";t (clock counts); counts", 10001, -5000.5, 5000.5);
+    TH1F *hTime = new TH1F("hTime", ";t_{ch0} - t_{ch1}; counts", 21, -10.5, 10.5);
 
     std::vector<std::pair<long, int>> channel0, channel1;
+    // Filling the  two vectors channel0 and channel1 with the time and the energy of the photons that are in the correct energy region
     while (input_file1 >> channel >> clock_counts >> energy >> dummy1 >> dummy1)
     {
         if (energy > 3000 and energy < 5000)
@@ -34,26 +36,27 @@ void Time(const char *input_name)
             }
         }
     }
+
     uint index_channel1 = 0;
     for (auto &&item : channel0)
     {
-
-        long minimum = 999999999999;
-        for (auto &&item1 : channel1)
+        long minimum = 999999999; /// dummy minimum value
+        for (uint index = index_channel1; index < channel1.size(); index++)
         {
-            if (TMath::Abs(item.first - item1.first) < TMath::Abs(minimum))
+            /// updating the minimum value
+            if (TMath::Abs(item.first - channel1[index].first) < TMath::Abs(minimum))
             {
-                minimum = item.first - item1.first;
+                minimum = item.first - channel1[index].first;
+                /// For the next element of channel 0 the loop on the second vector will start at index_channel1
+                index_channel1 = index;
                 continue;
             }
-
             hTime->Fill(minimum);
-            std::cout << minimum << std::endl;
             break;
-            index_channel1++;
         }
     }
 
     TCanvas *cTime = new TCanvas("cTime", "cTime");
     hTime->Draw();
+    hTime->Fit("gaus");
 }
