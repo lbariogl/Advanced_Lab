@@ -13,8 +13,8 @@ void Calibration(const char *input_name)
     int energy;
     int dummy1, dummy2;
 
-    TH1F *hEnergy0 = new TH1F("hEnergy0", ";E (a.u.);counts", 15001, -0.5, 15000.5);
-    TH1F *hEnergy1 = new TH1F("hEnergy1", ";E (a.u.);counts", 15001, -0.5, 15000.5);
+    TH1F *hEnergy0 = new TH1F("hEnergy0", "channel 0;E (a.u.);counts", 15001, -0.5, 15000.5);
+    TH1F *hEnergy1 = new TH1F("hEnergy1", "channel 1;E (a.u.);counts", 15001, -0.5, 15000.5);
 
     while (input_file >> channel >> clock_counts >> energy >> dummy1 >> dummy1)
     {
