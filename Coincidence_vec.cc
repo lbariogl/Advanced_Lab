@@ -63,7 +63,7 @@ void Coincidence_vec(const char *input_name)
       }
       
       if(fabs(min_delatT) > 20) continue;
-      std::cout<<min_delatT<<std::endl;
+      //std::cout<<min_delatT<<std::endl;
       
       hDeltaTime->Fill(min_delatT);
     }
@@ -72,7 +72,7 @@ void Coincidence_vec(const char *input_name)
     TCanvas *cTime = new TCanvas("cTime", "cTime");
     hDeltaTime->Draw();
     hDeltaTime->Fit("gaus");
-    gStyle->SetOptFit(1111)
+    gStyle->SetOptFit(1111);
     cTime->Update();
 
 }

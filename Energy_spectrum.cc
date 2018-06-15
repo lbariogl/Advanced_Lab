@@ -21,7 +21,7 @@ void Energy_spectrum(const char *input_name)
 
     float sigma_DeltaT = 0.6; //This means 6ns (times in the input file are expressed in tens of ns)
 
-    TH2F *h_spectrum = new TH2F("h_spectrum", ";ADC channel_0;ADC channel_1", 3000, 0.5, 11000.5, 3000, 0.5, 11000.5);
+    TH2F *h_spectrum = new TH2F("h_spectrum", ";ADC channel_0;ADC channel_1", 4000, 0.5, 16000.5, 4000, 0.5, 16000.5);
 
 
     // read file and fill vectors 
@@ -49,15 +49,16 @@ void Energy_spectrum(const char *input_name)
       for(long unsigned int j = 0; j < time_ch1.size(); ++j )
       {
         int temp_deltaT = time_ch0.at(i) - time_ch1.at(j);
-        if (fabs(temp_deltaT) > 2*sigma_DeltaT) continue;
+        if (fabs(temp_deltaT) > 5) continue;
         h_spectrum->Fill(energy_ch0.at(i),energy_ch1.at(j));
       }
     }
 
     
-    TCanvas *cSpectrum = new TCanvas("cSpectrum", "cSpectrum");
+    TCanvas *cSpectrum = new TCanvas("cSpectrum", "cSpectrum",600,600);
     h_spectrum->Draw("COLZ");
     cSpectrum->Update();
+    cSpectrum->SaveAs("Energy_spectrum_10min_Cs.pdf");
 
 }
     
