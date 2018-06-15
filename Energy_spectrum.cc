@@ -1,14 +1,12 @@
-#include <TH1F.h>
-#include <TFile.h>
+#include <TH2F.h>
 #include <TCanvas.h>
-#include <TStyle.h>
 
 #include <math.h>
 #include <fstream>
 #include <iostream>
 #include <vector>
 
-void Coincidence_vec(const char *input_name)
+void Energy_spectrum(const char *input_name)
 {
     std::ifstream input_file(input_name);
     int channel;
@@ -21,12 +19,9 @@ void Coincidence_vec(const char *input_name)
     vector<int> energy_ch1;
     vector<int> time_ch1;
 
-    int minEn_ch0 = 4000;
-    int maxEn_ch0 = 4500;
-    int minEn_ch1 = 4000;
-    int maxEn_ch1 = 4500;
+    float sigma_DeltaT = 0.6; //This means 6ns (times in the input file are expressed in tens of ns)
 
-    TH1F *hDeltaTime = new TH1F("hDeltaTime", ";Delta t (x10ns);counts", 40, -20., 20);
+    TH2F *h_spectrum = new TH2F("h_spectrum", ";ADC channel_0;ADC channel_1", 3000, 0.5, 11000.5, 3000, 0.5, 11000.5);
 
 
     // read file and fill vectors 
@@ -34,13 +29,11 @@ void Coincidence_vec(const char *input_name)
     {
         if (channel == 0)
         {
-          if(energy < minEn_ch0 || energy > maxEn_ch0) continue;
           time_ch0.push_back(clock_counts);
           energy_ch0.push_back(energy);   
         }
         else if (channel == 1)
         {
-          if(energy < minEn_ch1 || energy > maxEn_ch1) continue;
           time_ch1.push_back(clock_counts);
           energy_ch1.push_back(energy);  
         }
@@ -51,28 +44,20 @@ void Coincidence_vec(const char *input_name)
     }
 
     // combine times
-    long int min_delatT;
     for(long unsigned int i = 0; i < time_ch0.size(); ++i )
     {
-      min_delatT = 999999999999;
       for(long unsigned int j = 0; j < time_ch1.size(); ++j )
       {
         int temp_deltaT = time_ch0.at(i) - time_ch1.at(j);
-        if (fabs(temp_deltaT) > fabs(min_delatT)) continue;
-        min_delatT = temp_deltaT;
+        if (fabs(temp_deltaT) > 2*sigma_DeltaT) continue;
+        h_spectrum->Fill(energy_ch0.at(i),energy_ch1.at(j));
       }
-      
-      if(fabs(min_delatT) > 20) continue;
-      std::cout<<min_delatT<<std::endl;
-      
-      hDeltaTime->Fill(min_delatT);
     }
 
     
-    TCanvas *cTime = new TCanvas("cTime", "cTime");
-    hDeltaTime->Draw();
-    hDeltaTime->Fit("gaus");
-    gStyle->SetOptFit(1111)
-    cTime->Update();
+    TCanvas *cSpectrum = new TCanvas("cSpectrum", "cSpectrum");
+    h_spectrum->Draw("COLZ");
+    cSpectrum->Update();
 
 }
+    
