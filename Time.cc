@@ -18,7 +18,7 @@ void Time(const char *input_name)
     int energy;
     int dummy1, dummy2;
 
-    TH1F *hTime = new TH1F("hTime", ";t_{ch0} - t_{ch1}; counts", 21, -10.5, 10.5);
+    TH1F *hTime = new TH1F("hTime", ";t_{ch0} - t_{ch1}; counts", 41, -20.5, 20.5);
 
     std::vector<std::pair<long, int>> channel0, channel1;
     // Filling the  two vectors channel0 and channel1 with the time and the energy of the photons that are in the correct energy region
@@ -38,6 +38,7 @@ void Time(const char *input_name)
     }
 
     uint index_channel1 = 0;
+    uint time_window = 20;
     for (auto &&item : channel0)
     {
         long minimum = 999999999; /// dummy minimum value
@@ -51,7 +52,10 @@ void Time(const char *input_name)
                 index_channel1 = index;
                 continue;
             }
-            hTime->Fill(minimum);
+            if (TMath::Abs(minimum) < time_window)
+            {
+                hTime->Fill(minimum);
+            }
             break;
         }
     }
