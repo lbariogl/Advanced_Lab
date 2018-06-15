@@ -1,4 +1,5 @@
 #include <TH1F.h>
+#include <TH2F.h>
 #include <TF1.h>
 #include <TFile.h>
 #include <TCanvas.h>
@@ -19,12 +20,13 @@ void Time(const char *input_name)
     int dummy1, dummy2;
 
     TH1F *hTime = new TH1F("hTime", ";t_{ch0} - t_{ch1}; counts", 41, -20.5, 20.5);
+    TH2F *hEnergy = new TH2F("hEnergy", ";Energy (A.U.); Energy (A.U.)", 1001, -0.5, 16000, 1001, -0.5, 16000.5);
 
     std::vector<std::pair<long, int>> channel0, channel1;
     // Filling the  two vectors channel0 and channel1 with the time and the energy of the photons that are in the correct energy region
     while (input_file1 >> channel >> clock_counts >> energy >> dummy1 >> dummy1)
     {
-        if (energy > 3000 and energy < 5000)
+        if (energy > 0 and energy < 20000)
         {
             if (channel == 0)
             {
@@ -39,6 +41,8 @@ void Time(const char *input_name)
 
     uint index_channel1 = 0;
     uint time_window = 20;
+    int total_energy;
+
     for (auto &&item : channel0)
     {
         long minimum = 999999999; /// dummy minimum value
@@ -55,6 +59,8 @@ void Time(const char *input_name)
             if (TMath::Abs(minimum) < time_window)
             {
                 hTime->Fill(minimum);
+                total_energy = item.second + channel1[index].second;
+                hEnergy->Fill(item.second, channel1[index].second);
             }
             break;
         }
@@ -63,4 +69,7 @@ void Time(const char *input_name)
     TCanvas *cTime = new TCanvas("cTime", "cTime");
     hTime->Draw();
     hTime->Fit("gaus");
+    TCanvas *cEnergy = new TCanvas("cEnergy", "cEnergy");
+    hEnergy->Draw("colz");
+    //hEnergy->Fit("gauss");
 }
