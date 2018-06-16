@@ -5,6 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <cstring>
+#include <string>
+
+using namespace std;
 
 void Energy_spectrum(const char *input_name)
 {
@@ -58,7 +62,8 @@ void Energy_spectrum(const char *input_name)
     TCanvas *cSpectrum = new TCanvas("cSpectrum", "cSpectrum",600,600);
     h_spectrum->Draw("COLZ");
     cSpectrum->Update();
-    cSpectrum->SaveAs("Energy_spectrum_10min_Cs.pdf");
+    cSpectrum->SaveAs(("Energy_spectrum_" + (string)input_name + ".pdf").c_str());
+    cSpectrum->SaveAs(("Energy_spectrum_" + (string)input_name + ".root").c_str());
 
 }
     
