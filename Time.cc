@@ -1,5 +1,4 @@
 #include <TH1F.h>
-#include <TH2F.h>
 #include <TF1.h>
 #include <TFile.h>
 #include <TCanvas.h>
@@ -11,7 +10,7 @@
 #include <stdlib.h>
 //#include <pair>
 
-void Time(const char *input_name)
+void Time(const char *input_name, const char* output_name)
 {
     std::ifstream input_file1(input_name);
     int channel;
@@ -20,13 +19,12 @@ void Time(const char *input_name)
     int dummy1, dummy2;
 
     TH1F *hTime = new TH1F("hTime", ";t_{ch0} - t_{ch1}; counts", 41, -20.5, 20.5);
-    TH2F *hEnergy = new TH2F("hEnergy", ";Energy (A.U.); Energy (A.U.)", 1001, -0.5, 16000, 1001, -0.5, 16000.5);
 
     std::vector<std::pair<long, int>> channel0, channel1;
     // Filling the  two vectors channel0 and channel1 with the time and the energy of the photons that are in the correct energy region
-    while (input_file1 >> channel >> clock_counts >> energy >> dummy1 >> dummy1)
+    while (input_file1 >> channel >> clock_counts >> energy >> dummy1 >> dummy2)
     {
-        if (energy > 0 and energy < 20000)
+        if (energy > 4000 and energy < 4500)
         {
             if (channel == 0)
             {
@@ -41,17 +39,17 @@ void Time(const char *input_name)
 
     uint index_channel1 = 0;
     uint time_window = 20;
-    int total_energy;
-
-    for (auto &&item : channel0)
+    long tmp_min;
+    for (auto &item : channel0)
     {
         long minimum = 999999999; /// dummy minimum value
         for (uint index = index_channel1; index < channel1.size(); index++)
         {
             /// updating the minimum value
-            if (TMath::Abs(item.first - channel1[index].first) < TMath::Abs(minimum))
+            tmp_min = item.first - channel1[index].first;
+            if (TMath::Abs(tmp_min) <= TMath::Abs(minimum))
             {
-                minimum = item.first - channel1[index].first;
+                minimum = tmp_min;
                 /// For the next element of channel 0 the loop on the second vector will start at index_channel1
                 index_channel1 = index;
                 continue;
@@ -59,17 +57,16 @@ void Time(const char *input_name)
             if (TMath::Abs(minimum) < time_window)
             {
                 hTime->Fill(minimum);
-                total_energy = item.second + channel1[index].second;
-                hEnergy->Fill(item.second, channel1[index].second);
             }
             break;
         }
     }
 
     TCanvas *cTime = new TCanvas("cTime", "cTime");
+    cTime->SetLogy();
     hTime->Draw();
     hTime->Fit("gaus");
-    TCanvas *cEnergy = new TCanvas("cEnergy", "cEnergy");
-    hEnergy->Draw("colz");
-    //hEnergy->Fit("gauss");
+    TFile f(Form("ROOT_files/%s.root",output_name),"recreate");
+    hTime->Write();
+    cTime->SaveAs(Form("plots/%s.pdf",output_name));
 }
