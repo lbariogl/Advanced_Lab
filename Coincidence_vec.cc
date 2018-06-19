@@ -72,7 +72,7 @@ void Coincidence_vec(const char *input_name)
     TCanvas *cTime = new TCanvas("cTime", "cTime");
     hDeltaTime->Draw();
     hDeltaTime->Fit("gaus");
-    gStyle->SetOptFit(1111)
+    gStyle->SetOptFit(1111);
     cTime->Update();
 
 }
