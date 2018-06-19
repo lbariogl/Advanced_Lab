@@ -4,12 +4,14 @@
 
 #include <fstream>
 #include <iostream>
+#include <string> 
+#include <cstring>
 
 void Calibration(const char *input_name)
 {
     std::ifstream input_file(input_name);
     int channel;
-    int clock_counts;
+    long clock_counts;
     int energy;
     int dummy1, dummy2;
 
@@ -37,4 +39,7 @@ void Calibration(const char *input_name)
     hEnergy0->Draw();
     cEnergy->cd(2);
     hEnergy1->Draw();
+
+    cEnergy->SaveAs(("Energy_" + (string)input_name + ".pdf").c_str());
+    cEnergy->SaveAs(("Energy_" + (string)input_name + ".root").c_str());
 }
