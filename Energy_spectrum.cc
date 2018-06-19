@@ -1,5 +1,7 @@
 #include <TH2F.h>
 #include <TCanvas.h>
+#include <TPad.h>
+#include <TStopwatch.h>
 
 #include <math.h>
 #include <fstream>
@@ -8,20 +10,20 @@
 
 void Energy_spectrum(const char *input_name)
 {
+    TStopwatch timer;
+    timer.Start();
     std::ifstream input_file(input_name);
     int channel;
-    int clock_counts;
+    long clock_counts;
     int energy;
     int dummy1, dummy2;
 
     vector<int> energy_ch0;
-    vector<int> time_ch0;
+    vector<long> time_ch0;
     vector<int> energy_ch1;
-    vector<int> time_ch1;
+    vector<long> time_ch1;
 
-    float sigma_DeltaT = 0.6; //This means 6ns (times in the input file are expressed in tens of ns)
-
-    TH2F *h_spectrum = new TH2F("h_spectrum", ";ADC channel_0;ADC channel_1", 4000, 0.5, 16000.5, 4000, 0.5, 16000.5);
+    TH2F *h_spectrum = new TH2F("h_spectrum", ";ADC channel_0;ADC channel_1", 1000, 0.5, 16000.5, 1000, 0.5, 16000.5);
 
 
     // read file and fill vectors 
@@ -43,22 +45,34 @@ void Energy_spectrum(const char *input_name)
         }
     }
 
-    // combine times
-    for(long unsigned int i = 0; i < time_ch0.size(); ++i )
+    long unsigned k = 0;
+
+    for(long unsigned i = 0; i < time_ch0.size(); ++i )
     {
-      for(long unsigned int j = 0; j < time_ch1.size(); ++j )
+      //if (i%1000==0){std::cout << "index: " << i << " time_ch0: " << time_ch0.at(i) << " n entries: " << h_spectrum->GetEntries() << std::endl;}
+      for(long unsigned j = k; j < time_ch1.size(); ++j )
       {
-        int temp_deltaT = time_ch0.at(i) - time_ch1.at(j);
+        
+        long temp_deltaT = time_ch0.at(i) - time_ch1.at(j);
+        if (time_ch1.at(j) > time_ch0.at(i) + 5) break; //Avoids looping on all the 1s if the time difference between the 0 and the first inspected 1 is greater than 50 ns
+        
         if (fabs(temp_deltaT) > 5) continue;
+        
         h_spectrum->Fill(energy_ch0.at(i),energy_ch1.at(j));
+        //if (i%1000==0){std::cout << "j-k: " << j-k << std::endl;}
+        k = j;
+        //break; //This condition avoids to associate the same 0 with more than one 1
       }
     }
 
     
-    TCanvas *cSpectrum = new TCanvas("cSpectrum", "cSpectrum",600,600);
+    TCanvas *cSpectrum = new TCanvas("cSpectrum", "cSpectrum",1000,1000);
+    gPad->SetLogz();
     h_spectrum->Draw("COLZ");
     cSpectrum->Update();
-    cSpectrum->SaveAs("Energy_spectrum_10min_Cs.pdf");
-
+    cSpectrum->SaveAs("Energy_spectrum_10min.pdf");
+    
+    timer.Stop();
+    timer.Print();
 }
     

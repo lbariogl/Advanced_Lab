@@ -9,7 +9,7 @@ void Calibration(const char *input_name)
 {
     std::ifstream input_file(input_name);
     int channel;
-    int clock_counts;
+    long clock_counts;
     int energy;
     int dummy1, dummy2;
 
