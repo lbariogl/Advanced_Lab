@@ -7,6 +7,10 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <cstring>
+#include <string>
+
+using namespace std;
 
 void Energy_spectrum(const char *input_name)
 {
@@ -70,9 +74,8 @@ void Energy_spectrum(const char *input_name)
     gPad->SetLogz();
     h_spectrum->Draw("COLZ");
     cSpectrum->Update();
-    cSpectrum->SaveAs("Energy_spectrum_10min.pdf");
-    
-    timer.Stop();
-    timer.Print();
+    cSpectrum->SaveAs(("Energy_spectrum_" + (string)input_name + ".pdf").c_str());
+    cSpectrum->SaveAs(("Energy_spectrum_" + (string)input_name + ".root").c_str());
+
 }
     
