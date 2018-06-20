@@ -11,28 +11,34 @@
 #include <string>
 //#include <pair>
 
-int ReadFile(const char* input_name);
+int ReadFile(const char *input_name);
 
-void Scan(const char* list_name = "input_files/list.txt"){
-    TH2F* hScan = new TH2F("hScan",";y (cm); #theta (#circ)", 21,1.75,12.25,9,-20,340);
-    float y_arr[12] = {4.,4.5,5.,5.5,6.,6.5,7.,7.5,8.5,9.,9.5,10.};
-    float y_pos, angle;
-    std::string file_name;
-    int i=0;
-    std::ifstream input_list(list_name);
-    while(std::getline(input_list, file_name)){
-        cout << file_name << endl;
-        hScan->Fill(y_arr[i++],0.,ReadFile(Form("input_files/%s",file_name.c_str())));
+void Scan(const char *output_name = "output_lista.txt")
+{
+
+    std::ofstream output_file(output_name);
+    const int y_arr_length = 21;
+    float y_arr[y_arr_length] = {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0};
+    const int angle_arr_length = 5;//9;
+    float angle[angle_arr_length] = {0, 40, 80, 120, 160};//, 200, 240, 280, 320};
+    for(int i_angle = 0; i_angle < angle_arr_length; i_angle++){
+        for(int i_pos = 0; i_pos < y_arr_length; i_pos++){
+            int counts = ReadFile(Form("input_files/pet_scan/%.0fdeg/pet_scan_%.1fcm_%.0fdeg.txt",angle[i_angle],y_arr[i_pos],angle[i_angle]));
+            float angle_bis = (angle[i_angle] > 170) ? angle[i_angle] - 360 : angle[i_angle];
+            float pos_bis = y_arr[i_pos];
+            if(counts<0) continue;
+            output_file << angle_bis << " " << pos_bis << " " << counts << std::endl; 
+        }
     }
-    TCanvas* cScan = new TCanvas("cScan","cScan");
-    hScan->Draw("colz");
 }
-
-
 
 int ReadFile(const char *input_name)
 {
     std::ifstream input_file1(input_name);
+    if(!input_file1.is_open()){
+        printf("File %s does not exist\n", input_name);
+        return -1;
+    }
     int channel;
     long clock_counts;
     int energy;
@@ -73,8 +79,6 @@ int ReadFile(const char *input_name)
             }
         }
     }
-
-    std::cout << "counter: " << counter << std::endl;
 
     return counter;
 }
