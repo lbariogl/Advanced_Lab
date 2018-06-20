@@ -54,6 +54,7 @@ void Peaking()
                 double yp = vHisto[prev_index]->GetBinContent(bin);
                 func[index]->SetParameter(3 * p, yp); // Gaussian Nomalization
                 func[index]->SetParameter(3 * p + 1, xp); // Gaussian mean
+                func[index]->SetParLimits(3 * p + 1, xp - 0.001 * xp, xp + 0.001 * xp); //sigma
             }
             vHisto[prev_index]->Fit(Form("func%d", index));
             vHisto[prev_index]->Write();
