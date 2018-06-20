@@ -17,8 +17,8 @@
 // 19 06 2018
 void petImage(int resolution = 401)
 {
-    //std::string filename("reprocessed/output_lista.txt");
-    std::string filename("reprocessed/uniform.txt");
+    std::string filename("reprocessed/output_lista.txt");
+    //std::string filename("reprocessed/uniform.txt");
     std::ifstream input_file1(filename.c_str());
     float coordinate_y = 0;
     float coordinate_theta = 0;
