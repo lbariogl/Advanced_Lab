@@ -3,3 +3,5 @@ ROOT_files/
 input_files/
 plots/
 Group_AORS/
+*.d
+*.so
