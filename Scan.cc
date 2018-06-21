@@ -32,6 +32,28 @@ void Scan(const char *output_name = "output_lista.txt")
     }
 }
 
+
+void ScanSingleSource(const char *output_name = "reprocessed/singlesource.txt")
+{
+    std::ofstream output_file(output_name);
+    
+    const int y_arr_length = 11;
+    float y_arr[y_arr_length] = {1.0, 4.0, 4.5, 5.0, 5.5, 6.5, 7.0, 7.5, 8.5, 9.0, 9.5};
+    
+    for(int i_pos = 0; i_pos < y_arr_length; ++i_pos) {
+        std::cout << "Processing position: " << y_arr[i_pos] << std::endl;
+        int counts = ReadFile(Form("/workspace/First_scan_with_source/find_position_intense_source_%.1fcm.txt", y_arr[i_pos]));
+        float pos_bis = y_arr[i_pos];
+        if (counts < 0) {
+            continue;
+        }
+        output_file << 0 << " " << pos_bis << " " << counts << std::endl; 
+    }
+    
+}
+
+
+
 int ReadFile(const char *input_name)
 {
     std::ifstream input_file1(input_name);
