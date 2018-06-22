@@ -77,11 +77,8 @@ void Peaking()
                 func[prev_index]->SetParLimits(3 * p + 1, xp - 1, xp + 1); //sigma
             }
             vHisto[prev_index]->Fit(Form("func%d", index));
-            fit_results << "angle : " << coordinate_theta << std::endl;
-            fit_results << "Norm1 : " << func[prev_index]->GetParameter(0) << " Mu1 : " << func[prev_index]->GetParameter(1) << " Sigma1 : " << func[prev_index]->GetParameter(2) << std::endl;
-
-            fit_results << "Norm2 : " << func[prev_index]->GetParameter(3) << " Mu2 : " << func[prev_index]->GetParameter(4) << " Sigma2 : " << func[prev_index]->GetParameter(5) << std::endl;
-            fit_results << "****************************************************" << std::endl;
+            fit_results << vAngle[prev_index] << " " << func[prev_index]->GetParameter(0) << " " << func[prev_index]->GetParameter(1) << " " << func[prev_index]->GetParameter(2);
+            fit_results << " " << func[prev_index]->GetParameter(3) << " " << func[prev_index]->GetParameter(4) << " " << func[prev_index]->GetParameter(5) << std::endl;
             vHisto[prev_index]->Write();
             prev_index = index;
         }
