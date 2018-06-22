@@ -1,4 +1,5 @@
 #include <TH2F.h>
+#include <TH1F.h>
 #include <TCanvas.h>
 #include <TPad.h>
 #include <TStopwatch.h>
@@ -27,7 +28,12 @@ void Energy_spectrum(const char *input_name)
     vector<int> energy_ch1;
     vector<long> time_ch1;
 
+    // scatter plot
     TH2F *h_spectrum = new TH2F("h_spectrum", ";ADC channel_0;ADC channel_1", 1000, 0.5, 16000.5, 1000, 0.5, 16000.5);
+
+    // energy spectra in coincidence
+    TH1F *hEnergy0 = new TH1F("hEnergy0", "channel 0;E (a.u.);counts", 15001, -0.5, 15000.5);
+    TH1F *hEnergy1 = new TH1F("hEnergy1", "channel 1;E (a.u.);counts", 15001, -0.5, 15000.5);
 
 
     // read file and fill vectors 
@@ -62,7 +68,13 @@ void Energy_spectrum(const char *input_name)
         
         if (fabs(temp_deltaT) > 5) continue;
         
+        // fill scatter plot
         h_spectrum->Fill(energy_ch0.at(i),energy_ch1.at(j));
+
+        // fill energy spectra
+        hEnergy0->Fill(energy_ch0.at(i));
+        hEnergy1->Fill(energy_ch1.at(j));
+
         //if (i%1000==0){std::cout << "j-k: " << j-k << std::endl;}
         k = j;
         //break; //This condition avoids to associate the same 0 with more than one 1
@@ -74,8 +86,20 @@ void Energy_spectrum(const char *input_name)
     gPad->SetLogz();
     h_spectrum->Draw("COLZ");
     cSpectrum->Update();
-    cSpectrum->SaveAs(("Energy_spectrum_" + (string)input_name + ".pdf").c_str());
-    cSpectrum->SaveAs(("Energy_spectrum_" + (string)input_name + ".root").c_str());
+    cSpectrum->SaveAs(("Energy_spectrum_ScatterPlot_" + (string)input_name + ".pdf").c_str());
+    cSpectrum->SaveAs(("Energy_spectrum_ScatterPlot_" + (string)input_name + ".root").c_str());
+
+
+    
+    TCanvas *cEnergy = new TCanvas("cEnergy", "cEnergy");
+    cEnergy->Divide(1, 2);
+    cEnergy->cd(1);
+    hEnergy0->Draw();
+    cEnergy->cd(2);
+    hEnergy1->Draw();
+
+    cEnergy->SaveAs(("Energy_spectrum_coincidence_" + (string)input_name + ".pdf").c_str());
+    cEnergy->SaveAs(("Energy_spectrum_coincidence_" + (string)input_name + ".root").c_str());
 
 }
     
