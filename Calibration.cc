@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-void Calibration(const char *input_name, const char* output_name)
+void Calibration(const char *input_name, const char *output_name)
 {
     gStyle->SetOptStat(0);
     std::ifstream input_file(input_name);
@@ -40,9 +40,8 @@ void Calibration(const char *input_name, const char* output_name)
     cEnergy->cd(2);
     hEnergy1->Draw();
 
-    TFile f(Form("ROOT_files/%s.root",output_name),"recreate");
+    TFile f(Form("ROOT_files/%s.root", output_name), "recreate");
     hEnergy0->Write();
     hEnergy1->Write();
-    cEnergy->SaveAs(Form("plots/%s.pdf",output_name));
-
+    cEnergy->SaveAs(Form("plots/%s.png", output_name));
 }

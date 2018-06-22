@@ -10,7 +10,7 @@
 #include <stdlib.h>
 //#include <pair>
 
-void Time(const char *input_name, const char* output_name)
+void Time(const char *input_name, const char *output_name)
 {
     std::ifstream input_file1(input_name);
     int channel;
@@ -66,7 +66,7 @@ void Time(const char *input_name, const char* output_name)
     cTime->SetLogy();
     hTime->Draw();
     hTime->Fit("gaus");
-    TFile f(Form("ROOT_files/%s.root",output_name),"recreate");
+    TFile f(Form("ROOT_files/%s.root", output_name), "recreate");
     hTime->Write();
-    cTime->SaveAs(Form("plots/%s.pdf",output_name));
+    cTime->SaveAs(Form("plots/%s.png", output_name));
 }
