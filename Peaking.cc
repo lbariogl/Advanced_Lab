@@ -72,9 +72,16 @@ void Peaking()
                 std::cout << "Peaks found x: " << xp << std::endl;
                 int bin = vHisto[prev_index]->GetXaxis()->FindBin(xp);
                 double yp = vHisto[prev_index]->GetBinContent(bin);
-                func[prev_index]->SetParameter(3 * p, yp);                 // Gaussian Nomalization
-                func[prev_index]->SetParameter(3 * p + 1, xp);             // Gaussian mean
-                func[prev_index]->SetParLimits(3 * p + 1, xp - 1, xp + 1); //sigma
+                func[prev_index]->SetParameter(3 * p, yp);     // Gaussian Nomalization
+                func[prev_index]->SetParameter(3 * p + 1, xp); // Gaussian mean
+                if (prev_index == 7)
+                {
+                    func[prev_index]->SetParLimits(3 * p + 1, xp - 5, xp + 5); //sigma
+                }
+                else
+                {
+                    func[prev_index]->SetParLimits(3 * p + 1, xp - 1, xp + 1); //sigma
+                }
             }
             vHisto[prev_index]->Fit(Form("func%d", index));
             fit_results << vAngle[prev_index] << " " << func[prev_index]->GetParameter(0) << " " << func[prev_index]->GetParameter(1) << " " << func[prev_index]->GetParameter(2);

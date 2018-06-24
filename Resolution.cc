@@ -35,5 +35,9 @@ void Resolution()
     hHisto->Fit("func");
     hHisto->Write();
 
+    TCanvas *cResol = new TCanvas("cResol", "cResol");
+    hHisto->Draw();
+    cResol->SaveAs("plots/resolution.png");
+
     std::cout << "sigma : " << func->GetParameter(2) << std::endl;
 }
