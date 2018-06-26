@@ -3,7 +3,6 @@
 
 void UseKalman()
 {
-    gSystem->CompileMacro("Kalman.cxx", "kgf");
     Kalman kf(0, 0);
 
     /// For this test I am using a vertex located in (-1,2), in a box with dimensions 4x6 centered in (0,0). The referent point is the intersection of the straight line with the side of the box: x = 2 , y = 2*m + q.

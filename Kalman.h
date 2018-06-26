@@ -27,7 +27,7 @@ private:
   TMatrixF Prev_StateCov;
 
   void setMatrixA(float m);
-  void setMatrixB(float y);
+  void setMatrixB(float x);
   void setMatrixH0(float x, float y, float m);
 };
 
