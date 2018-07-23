@@ -13,22 +13,25 @@ public:
   void printState();
 
 private:
-  TMatrixF A;
-  TMatrixF B;
-  TMatrixF H0;
+  TMatrixF A_;
+  TMatrixF B_;
+  TMatrixF H0_;
 
-  TMatrixF State;
-  TMatrixF StateCov;
+  TMatrixF State_;
+  TMatrixF StateCov_;
 
-  TMatrixF Z; // measure
-  TMatrixF V; // covariance matrix for the measurement
+  TMatrixF Z_; // measure
+  TMatrixF V_; // covariance matrix for the measurement
 
-  TMatrixF Prev_State;
-  TMatrixF Prev_StateCov;
+  TMatrixF Prev_State_;
+  TMatrixF Prev_StateCov_;
+  uint iteration_ = 0;
+  TMatrix Accumulation_;
 
-  void setMatrixA(float m);
-  void setMatrixB(float x);
   void setMatrixH0(float x, float y, float m);
+  void setMatrixA(float x, float y, float m);
+  void setMatrixB(float x, float y, float m);
+
 };
 
 #endif
